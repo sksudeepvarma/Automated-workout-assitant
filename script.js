@@ -1,3 +1,4 @@
+// Define exercises
 const workouts = [
 	'Scissor Leg Raises',
 	'Leg Raise and Hip Thrust',
@@ -8,7 +9,6 @@ const workouts = [
 	'Side Plank Rotation',
 	'Crunches',
 	'V Sit Crunches',
-	'Crunches Again',
 	'Situps',
 	'Plank Knee Ins',
 	'Plank',
@@ -16,27 +16,28 @@ const workouts = [
 	'Stomach Vacuums (Squeeze)'
 ];
 
+// Timer and workout settings
 const workoutTime = 30; // seconds
 const restTime = 15; // seconds
-let currentWorkout = 0;
+let currentWorkout = 0; // Index of the current workout
+let remainingTime = 0;
+let isPaused = false;
+let timerInterval = null;
+let currentCallback = null; // Stores the next step after the timer
 
+// Select DOM elements
 const timerDisplay = document.getElementById('timer');
 const announcement = document.getElementById('announcement');
 const startBtn = document.getElementById('startBtn');
 const pauseBtn = document.getElementById('pauseBtn');
 const resumeBtn = document.getElementById('resumeBtn');
 
-let timerInterval;
-let remainingTime;
-let isPaused = false;
-let currentCallback = null; // Store the current callback for resuming
-
+// Main workout flow
 function startWorkout() {
 	if (currentWorkout < workouts.length) {
 		const workoutName = workouts[currentWorkout];
 		announcement.innerText = `Workout: ${workoutName}`;
 		speak(`Starting ${workoutName}`, () => {
-			// Start the workout timer after announcing the workout
 			startTimer(workoutTime, 'Workout', () => {
 				speak('Rest time!', () => {
 					announcement.innerText = 'Rest';
@@ -56,10 +57,11 @@ function startWorkout() {
 	}
 }
 
+// Timer logic
 function startTimer(duration, type, callback) {
 	clearInterval(timerInterval);
 	remainingTime = duration;
-	currentCallback = callback; // Store the current callback for resumption
+	currentCallback = callback; // Store callback for resume functionality
 	updateUI(remainingTime);
 
 	timerInterval = setInterval(() => {
@@ -80,10 +82,12 @@ function startTimer(duration, type, callback) {
 	}, 1000);
 }
 
+// Update the timer display
 function updateUI(time) {
 	timerDisplay.innerText = time;
 }
 
+// Text-to-speech
 function speak(message, callback) {
 	const synth = window.speechSynthesis;
 
@@ -92,18 +96,18 @@ function speak(message, callback) {
 
 	const utterance = new SpeechSynthesisUtterance(message);
 
-	// Execute callback after speech is done
+	// Callback after speech finishes
 	utterance.onend = () => {
 		if (callback && !isPaused) {
 			callback();
 		}
 	};
 
-	utterance.rate = 1; // Normal speed
+	utterance.rate = 1; // Normal speech rate
 	if (!isPaused) synth.speak(utterance);
 }
 
-// Pause button functionality
+// Pause functionality
 pauseBtn.addEventListener('click', () => {
 	isPaused = true;
 	clearInterval(timerInterval);
@@ -112,7 +116,7 @@ pauseBtn.addEventListener('click', () => {
 	resumeBtn.style.display = 'inline-block';
 });
 
-// Resume button functionality
+// Resume functionality
 resumeBtn.addEventListener('click', () => {
 	isPaused = false;
 	if (remainingTime > 0) {
@@ -122,7 +126,7 @@ resumeBtn.addEventListener('click', () => {
 	resumeBtn.style.display = 'none';
 });
 
-// Start button event listener
+// Start button functionality
 startBtn.addEventListener('click', () => {
 	startBtn.style.display = 'none';
 	startWorkout();
