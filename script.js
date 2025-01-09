@@ -6,7 +6,8 @@ const workouts = [
 	'Flutter Kicks',
 	'Russian Twists',
 	'Side Oblique Crunches',
-	'Side Plank Rotation',
+	'Side Plank Rotation Left',
+	'Side Plank Rotation right',
 	'Crunches',
 	'V Sit Crunches',
 	'Situps',
@@ -18,7 +19,7 @@ const workouts = [
 
 // Timer and workout settings
 const workoutTime = 30; // seconds
-const restTime = 15; // seconds
+const restTime = 10; // seconds
 let currentWorkout = 0; // Index of the current workout
 let remainingTime = 0;
 let isPaused = false;
@@ -130,4 +131,46 @@ resumeBtn.addEventListener('click', () => {
 startBtn.addEventListener('click', () => {
 	startBtn.style.display = 'none';
 	startWorkout();
+});
+
+let wakeLock = null;
+
+// Request a wake lock
+async function requestWakeLock() {
+	try {
+		if ('wakeLock' in navigator) {
+			wakeLock = await navigator.wakeLock.request('screen');
+			console.log('Screen Wake Lock is active');
+		} else {
+			console.log('Wake Lock API is not supported in this browser.');
+		}
+	} catch (err) {
+		console.error(`Failed to acquire wake lock: ${err.message}`);
+	}
+}
+
+// Release the wake lock
+async function releaseWakeLock() {
+	if (wakeLock) {
+		await wakeLock.release();
+		wakeLock = null;
+		console.log('Screen Wake Lock released');
+	}
+}
+
+// Handle visibility changes to re-request wake lock if needed
+document.addEventListener('visibilitychange', async () => {
+	if (document.visibilityState === 'visible' && !wakeLock) {
+		await requestWakeLock();
+	}
+});
+
+// Request wake lock when the app starts
+startBtn.addEventListener('click', async () => {
+	await requestWakeLock();
+});
+
+// Release wake lock when the app is closed or the user navigates away
+window.addEventListener('unload', async () => {
+	await releaseWakeLock();
 });
