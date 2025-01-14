@@ -9,12 +9,21 @@
 	</head>
 	<body>
 		<div class="tracker">
-			<h1>🏋️‍♀️ Automated Workout Tracker</h1>
+			<header class="header">
+				<h1>🏋️‍♀️ AI Workout Tracker</h1>
+				<div class="hamburger-menu" id="menuIcon">☰</div>
+			</header>
 			<div class="announcement">
 				<p id="announcement">Get ready to sweat! Let's begin.</p>
 			</div>
 			<div class="timer-display">
 				<div id="timer">30</div>
+			</div>
+			<div class="next-workout">
+				<h3>Next Up: <span id="nextWorkout">Leg Raise and Hip Thrust</span></h3>
+			</div>
+			<div class="progress-bar-container">
+				<div class="progress-bar" id="progressBar"></div>
 			</div>
 			<div class="button-group">
 				<button id="startBtn">Start Workout</button>
@@ -22,6 +31,14 @@
 				<button id="resumeBtn" style="display: none">Resume</button>
 			</div>
 		</div>
+
+		<!-- Sidebar for Workout List -->
+		<div class="sidebar" id="sidebar">
+			<button class="close-btn" id="closeSidebar">×</button>
+			<h2>Workout Progress</h2>
+			<ul id="workoutList"></ul>
+		</div>
+
 		<footer>
 			<p>Stay consistent, stay fit 💪</p>
 		</footer>
